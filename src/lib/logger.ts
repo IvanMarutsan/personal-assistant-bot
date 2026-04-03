@@ -10,8 +10,16 @@ function shouldLog(level: Level): boolean {
 }
 
 export const logger = {
-  debug: (...args: unknown[]) => shouldLog("debug") && console.debug("[debug]", ...args),
-  info: (...args: unknown[]) => shouldLog("info") && console.info("[info]", ...args),
-  warn: (...args: unknown[]) => shouldLog("warn") && console.warn("[warn]", ...args),
-  error: (...args: unknown[]) => shouldLog("error") && console.error("[error]", ...args)
+  debug: (...args: unknown[]) => {
+    if (shouldLog("debug")) console.debug("[debug]", ...args);
+  },
+  info: (...args: unknown[]) => {
+    if (shouldLog("info")) console.info("[info]", ...args);
+  },
+  warn: (...args: unknown[]) => {
+    if (shouldLog("warn")) console.warn("[warn]", ...args);
+  },
+  error: (...args: unknown[]) => {
+    if (shouldLog("error")) console.error("[error]", ...args);
+  }
 };
