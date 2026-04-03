@@ -17,21 +17,27 @@ Telegram bot scaffold for Personal Assistant V0.
 
 ## Menu
 - Відкрити застосунок
+- Інбокс
 - Швидка задача
 - Швидка нотатка
-- Інбокс
+- Скасувати
+- Допомога
 
 ## Commands
 - `/start`
+- `/app`
 - `/menu`
 - `/help`
-- `/task <text>`
-- `/note <text>`
-- `/inbox <text>`
+- `/cancel` (скасовує активний режим захоплення)
+- `/task` або `/task <text>`
+- `/note` або `/note <text>`
+- `/inbox` або `/inbox <text>`
 - `/today` (placeholder)
 - `/review` (placeholder)
 
 ## Notes
+- Після натискання кнопок `Інбокс` / `Швидка задача` / `Швидка нотатка` бот вмикає одноразовий режим захоплення:
+  наступне текстове повідомлення автоматично зберігається у відповідний тип і режим очищується.
 - Voice messages use Edge Function ingestion (`ingest-voice-telegram`) when voice AI env vars are configured.
 - If Supabase env vars are configured, captures are inserted into `inbox_items`.
 - If Supabase env vars are missing, bot runs in scaffold mode and acknowledges capture without persistence.

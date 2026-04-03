@@ -1,19 +1,22 @@
 import type { Context } from "grammy";
+import { clearCaptureMode } from "../capture-mode.js";
+import { promptInboxCaptureMode } from "../capture-prompts.js";
 import { captureInboxItem } from "../../services/capture.js";
 
 export async function handleInbox(ctx: Context): Promise<void> {
   const text = ctx.match?.toString().trim();
-
-  if (!text) {
-    await ctx.reply("Використання: /inbox <що потрібно запам'ятати>");
-    return;
-  }
-
   const telegramUserId = ctx.from?.id;
+
   if (!telegramUserId) {
     await ctx.reply("Не вдалося визначити користувача Telegram.");
     return;
   }
+
+  if (!text) {
+    await promptInboxCaptureMode(ctx, telegramUserId);
+    return;
+  }
+  clearCaptureMode(telegramUserId);
 
   const result = await captureInboxItem({
     telegramUserId,

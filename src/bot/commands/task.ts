@@ -1,18 +1,21 @@
 import type { Context } from "grammy";
+import { clearCaptureMode } from "../capture-mode.js";
+import { promptTaskCaptureMode } from "../capture-prompts.js";
 import { captureInboxItem } from "../../services/capture.js";
 
 export async function handleTaskQuickAdd(ctx: Context): Promise<void> {
   const text = ctx.match?.toString().trim();
-  if (!text) {
-    await ctx.reply("Використання: /task <що треба зробити>");
-    return;
-  }
-
   const telegramUserId = ctx.from?.id;
   if (!telegramUserId) {
     await ctx.reply("Не вдалося визначити користувача Telegram.");
     return;
   }
+
+  if (!text) {
+    await promptTaskCaptureMode(ctx, telegramUserId);
+    return;
+  }
+  clearCaptureMode(telegramUserId);
 
   const result = await captureInboxItem({
     telegramUserId,
@@ -29,6 +32,7 @@ export async function handleTaskQuickAdd(ctx: Context): Promise<void> {
     return;
   }
 
-  const suffix = result.mode === "stored" ? " Збережено в інбокс." : " Захоплено в режимі scaffold.";
-  await ctx.reply(`Задачу збережено.${suffix}`);
+  const suffix =
+    result.mode === "stored" ? " Додав у Inbox для подальшого розбору в застосунку." : " Захоплено в режимі scaffold.";
+  await ctx.reply(`Готово.${suffix}`);
 }

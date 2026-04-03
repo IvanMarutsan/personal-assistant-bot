@@ -1,4 +1,5 @@
 import type { Context } from "grammy";
+import { clearCaptureMode, getCaptureMode } from "../bot/capture-mode.js";
 import { captureInboxItem } from "../services/capture.js";
 import { ingestVoiceWithAi } from "../services/voice-ai.js";
 import { env } from "../lib/config.js";
@@ -16,6 +17,11 @@ export async function handleVoiceMessage(ctx: Context): Promise<void> {
     return;
   }
 
+  const hadPendingMode = !!getCaptureMode(telegramUserId);
+  if (hadPendingMode) {
+    clearCaptureMode(telegramUserId);
+  }
+
   if (env.voiceAiEnabled) {
     const aiResult = await ingestVoiceWithAi({
       telegramUserId,
@@ -28,7 +34,11 @@ export async function handleVoiceMessage(ctx: Context): Promise<void> {
     });
 
     if (aiResult.accepted) {
-      await ctx.reply("Голосове повідомлення збережено. Я спробував розпізнати зміст — перевір у Inbox.");
+      await ctx.reply(
+        hadPendingMode
+          ? "Голосове повідомлення збережено. Попередній текстовий режим скасовано, перевір результат у Inbox."
+          : "Голосове повідомлення збережено. Я спробував розпізнати зміст — перевір у Inbox."
+      );
       return;
     }
   }
@@ -45,5 +55,9 @@ export async function handleVoiceMessage(ctx: Context): Promise<void> {
     return;
   }
 
-  await ctx.reply("Голосове повідомлення збережено без AI-розбору. Перевір Inbox.");
+  await ctx.reply(
+    hadPendingMode
+      ? "Голосове повідомлення збережено без AI-розбору. Попередній текстовий режим скасовано."
+      : "Голосове повідомлення збережено без AI-розбору. Перевір Inbox."
+  );
 }
