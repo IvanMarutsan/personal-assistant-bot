@@ -3,21 +3,21 @@ import { MENU_ACTIONS } from "../menu-actions.js";
 
 export async function handleQuickAddTaskPrompt(ctx: Context): Promise<void> {
   await ctx.answerCallbackQuery();
-  await ctx.reply("Quick Add Task: send `/task <what needs to be done>`.", {
+  await ctx.reply("Швидка задача: надішли `/task <що треба зробити>`.", {
     parse_mode: "Markdown"
   });
 }
 
 export async function handleQuickAddNotePrompt(ctx: Context): Promise<void> {
   await ctx.answerCallbackQuery();
-  await ctx.reply("Quick Add Note: send `/note <your note>`.", {
+  await ctx.reply("Швидка нотатка: надішли `/note <текст нотатки>`.", {
     parse_mode: "Markdown"
   });
 }
 
 export async function handleInboxPrompt(ctx: Context): Promise<void> {
   await ctx.answerCallbackQuery();
-  await ctx.reply("Inbox capture: send `/inbox <text>` or drop a voice message.");
+  await ctx.reply("Захоплення в інбокс: надішли `/inbox <текст>` або голосове повідомлення.");
 }
 
 export const menuActionHandlers = [

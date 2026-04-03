@@ -4,13 +4,13 @@ import { captureInboxItem } from "../../services/capture.js";
 export async function handleNoteQuickAdd(ctx: Context): Promise<void> {
   const text = ctx.match?.toString().trim();
   if (!text) {
-    await ctx.reply("Usage: /note <your note>");
+    await ctx.reply("Використання: /note <текст нотатки>");
     return;
   }
 
   const telegramUserId = ctx.from?.id;
   if (!telegramUserId) {
-    await ctx.reply("Could not identify Telegram user.");
+    await ctx.reply("Не вдалося визначити користувача Telegram.");
     return;
   }
 
@@ -23,12 +23,12 @@ export async function handleNoteQuickAdd(ctx: Context): Promise<void> {
   if (!result.accepted) {
     const message =
       result.reason === "user_not_registered"
-        ? "Open the Mini App once to complete account setup."
-        : "Could not capture note right now.";
+        ? "Відкрий Mini App один раз, щоб завершити налаштування акаунта."
+        : "Не вдалося зберегти нотатку зараз.";
     await ctx.reply(message);
     return;
   }
 
-  const suffix = result.mode === "stored" ? " Saved to inbox." : " Captured in scaffold mode.";
-  await ctx.reply(`Note captured.${suffix}`);
+  const suffix = result.mode === "stored" ? " Збережено в інбокс." : " Захоплено в режимі scaffold.";
+  await ctx.reply(`Нотатку збережено.${suffix}`);
 }

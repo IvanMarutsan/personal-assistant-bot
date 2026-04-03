@@ -10,11 +10,16 @@ Telegram bot scaffold for Personal Assistant V0.
 5. Install deps: `npm install`.
 6. Run in dev: `npm run dev`.
 
+## MINI_APP_URL strategy
+- Stable testing: set `MINI_APP_URL` to hosted HTTPS Mini App URL (recommended).
+- Local phone debug: temporarily set `MINI_APP_URL` to active tunnel URL.
+- After any URL change, restart bot and use fresh `/start` -> **Відкрити застосунок**.
+
 ## Menu
-- Open App
-- Quick Add Task
-- Quick Add Note
-- Inbox
+- Відкрити застосунок
+- Швидка задача
+- Швидка нотатка
+- Інбокс
 
 ## Commands
 - `/start`
