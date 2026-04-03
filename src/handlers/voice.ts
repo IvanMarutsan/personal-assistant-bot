@@ -1,12 +1,36 @@
 import type { Context } from "grammy";
 import { captureInboxItem } from "../services/capture.js";
+import { ingestVoiceWithAi } from "../services/voice-ai.js";
+import { env } from "../lib/config.js";
 
 export async function handleVoiceMessage(ctx: Context): Promise<void> {
   const telegramUserId = ctx.from?.id;
   const voiceFileId = ctx.message?.voice?.file_id;
+  const voiceDurationSec = ctx.message?.voice?.duration;
+  const voiceMimeType = ctx.message?.voice?.mime_type;
+  const voiceFileSize = ctx.message?.voice?.file_size;
+  const telegramChatId = ctx.chat?.id;
+  const telegramMessageId = ctx.message?.message_id;
 
   if (!telegramUserId || !voiceFileId) {
     return;
+  }
+
+  if (env.voiceAiEnabled) {
+    const aiResult = await ingestVoiceWithAi({
+      telegramUserId,
+      voiceFileId,
+      voiceDurationSec,
+      voiceMimeType,
+      voiceFileSize,
+      telegramChatId,
+      telegramMessageId
+    });
+
+    if (aiResult.accepted) {
+      await ctx.reply("Голосове повідомлення збережено. Я спробував розпізнати зміст — перевір у Inbox.");
+      return;
+    }
   }
 
   const result = await captureInboxItem({
@@ -16,15 +40,10 @@ export async function handleVoiceMessage(ctx: Context): Promise<void> {
   });
 
   if (!result.accepted) {
-    const message =
-      result.reason === "user_not_registered"
-        ? "Open the Mini App once to complete account setup."
-        : "Voice capture placeholder failed.";
+    const message = "Не вдалося обробити голосове повідомлення. Спробуй ще раз за хвилину.";
     await ctx.reply(message);
     return;
   }
 
-  await ctx.reply(
-    "Voice captured. Transcription and AI classification will be added in a later iteration."
-  );
+  await ctx.reply("Голосове повідомлення збережено без AI-розбору. Перевір Inbox.");
 }
